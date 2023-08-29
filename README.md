@@ -1,20 +1,15 @@
-# DevSecOps Workshop - Automated Setup
+# Robot Hackathon - Automated Setup
 
-Ansible automation to install and configure components of the workshop. For example to test the workshop or skip to certain chapters.
+Ansible automation to install and configure the OpenShift components for the hackathon.
 
 Currently supported OpenShift version 4.12
 
-Currently supported component installation:
+Currently installed components:
 
 - Gitea (including repos)
 - ODF
 - Quay
-- Quay Bridge
 - DevSpaces
-- OpenShift Pipelines
-- OpenShift GitOps
-- ACS
-- ACM
 - Web Terminal
 
 ## Run Options
@@ -117,34 +112,6 @@ The default matches the position in a RHPDS bastion, so adjust if required.
 ansible-navigator run -m stdout ansible/setup.yml -i inventory/custom_hosts.ini
 ```
 
-### Customize the automation
-
-#### Installed components
-
-By default the script will install all components.
-
-You can choose to skip certain components by applying tags
-
-The following tags are available
-
-- prepare (must always be executed)
-- gitea
-- gitea_repo
-- odf
-- quay
-- devspaces
-- pipelines
-- gitops
-- acs
-- acm
-- webterminal
-
-For example this command will skip the DevSpaces and ACM installation
-
-```
-ansible-navigator run -m stdout ansible/setup.yml -i inventory/custom_hosts.ini --skip-tags=devspaces, acm
-```
-
 #### Other configurations
 
 You can further adjust the installation via environment variables
@@ -175,14 +142,3 @@ ansible-builder build \
 podman push quay.io/sifa/devsecops-workshop:devel
 ```
 
-## Facilitator Notes
-
-As the full workshop takes more than a day to complete, there are chapters than you can automate and skip in the workshop.
-
-Make sure to add a filter to the lab guide to exclude these chapters when running this customized workshop as explained in https://github.com/devsecops-workshop/workshop-guide#live-customizing-of-the-guide
-
-### Skip and Automate Chapter "Install Prerequisites Cluster"
-
-```bash
-ansible-navigator run -m stdout ansible/setup.yml -i inventory/custom_hosts.ini --skip-tags=devspaces,pipelines,gitops,acs,acm
-```
