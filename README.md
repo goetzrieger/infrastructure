@@ -85,7 +85,7 @@ source ~/.profile
 You are now ready to clone this project to your system (local or bastion).
 
 ```
-git clone https://github.com/devsecops-workshop/setup-automation.git
+git clone https://github.com/cloud-native-robotz-hackathon/setup-automation.git
 cd setup-automation
 ```
 
