@@ -10,6 +10,5 @@ gitea_admin_password: gitea
 gitea_admin_email: opentlc-mgr@redhat.com
 gitea_ssl: true
 gitea_repos:
-  - {"clone_addr":"https://github.com/devsecops-workshop/quarkus-build-options.git","repo_name":"quarkus-build-options"}
-  - {"clone_addr":"https://github.com/devsecops-workshop/openshift-gitops-getting-started.git","repo_name":"openshift-gitops-getting-started"}
+  - {"clone_addr":"https://github.com/cloud-native-robotz-hackathon/starter-app-python.git","repo_name":"starter-app-python"}
 ...

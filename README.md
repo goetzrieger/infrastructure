@@ -112,6 +112,32 @@ The default matches the position in a RHPDS bastion, so adjust if required.
 ansible-navigator run -m stdout ansible/setup.yml -i inventory/custom_hosts.ini
 ```
 
+### Customize the automation
+
+#### Installed components
+
+By default the script will install all components.
+
+You can choose to skip certain components by applying tags
+
+The following tags are available
+
+- prepare (must always be executed)
+- gitea
+- gitea_repo
+- odf
+- quay
+- devspaces
+- pipelines
+- webterminal
+- ods
+
+For example to just install RHODS, execute
+
+```
+ansible-navigator run -m stdout ansible/setup.yml -i inventory/custom_hosts.ini --tags=prepare,ods
+```
+
 #### Other configurations
 
 You can further adjust the installation via environment variables
@@ -141,4 +167,3 @@ ansible-builder build \
 
 podman push quay.io/sifa/devsecops-workshop:devel
 ```
-

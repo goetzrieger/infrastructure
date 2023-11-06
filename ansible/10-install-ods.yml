@@ -1,0 +1,9 @@
+---
+- hosts: localhost
+  tags: ods
+  vars_files:
+  - ../vars.yml
+  tasks:
+  - import_role:
+      name: ods
+      tasks_from: install-ods.yml
