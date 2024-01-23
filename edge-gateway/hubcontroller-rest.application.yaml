@@ -9,7 +9,7 @@ spec:
     server: https://10.89.114.152:6443
   project: default
   source:
-    path: gitops-hubcontroller-rest
-    repoURL: https://github.com/cloud-native-robotz-hackathon/devel-bucket.git
-    targetRevision: master
+    path: edge-gateway/hubcontroller-rest-gitops/
+    repoURL: https://github.com/cloud-native-robotz-hackathon/infrastructure.git
+    targetRevision: main
   syncPolicy: {}
