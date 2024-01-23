@@ -10,12 +10,13 @@ All about infrastructure provisioning for the robot hackathon.
 |---|---|
 |[datacenter/](datacenter/)|Main OpenShift Cluster for Training and development|
 |[edge-gateway/](edge-gateway/)| Single Node OpenShift to manage all robotz.
+|[robot/](robot/)|All about the robot provisioning and configuration.
 
 ## Networking
 
-Network: 192.168.8.0/24
-Gateway: 192.168.8.1
-DNS: 192.168.8.1
+* Network: 192.168.8.0/24
+* Gateway: 192.168.8.1
+* DNS: 192.168.8.1
 
 |IP|Device/Name|
 |---|---|
