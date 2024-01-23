@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    fabric8.io/git-branch: master
+    fabric8.io/git-commit: d6149aebca8f2ccd695fb90a1680cd6f8db4b96f
+    fabric8.io/git-url: git@github.com:cloud-native-robotz-hackathon/hubcontroller-rest.git
+    fabric8.io/scm-tag: booster-parent-23
+    fabric8.io/scm-url: https://github.com/openshiftio/hub-controller-live
+    internal.skupper.io/originalAssignedPort: 8080:1024
+    internal.skupper.io/originalSelector: app=hub-controller-live,group=de.nexussix.openshift.hackathon,provider=fabric8
+    internal.skupper.io/originalTargetPort: 8080:8080
+    prometheus.io/port: "9779"
+    prometheus.io/scrape: "true"
+  labels:
+    app: hub-controller-live
+    expose: "true"
+    group: de.nexussix.openshift.hackathon
+    provider: fabric8
+    version: 1.0.0-SNAPSHOT
+  name: hub-controller-live
+spec:
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+    targetPort: 1024
+  selector:
+    application: skupper-router
+    skupper.io/component: router
+  sessionAffinity: None
+  type: ClusterIP

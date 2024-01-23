@@ -1,0 +1,7 @@
+apiVersion: v1
+data:
+  MAP: '{"terminator": "terminator.example.com","abcwarrior": "abcwarrior.example.com"}'
+immutable: false
+kind: ConfigMap
+metadata:
+  name: robot-mapping-configmap
