@@ -1,0 +1,50 @@
+---
+- hosts: robots
+  gather_facts: false
+  tasks:
+    - name: Check /dev/video0
+      ansible.builtin.stat:
+        path: /dev/video0
+      register: stat_result
+
+    - name: Fail if /dev/video0 is missing
+      ansible.builtin.fail:
+        msg: "Device /dev/video0 is missing"
+      when: not stat_result.stat.exists
+
+
+    - name: Upload get-picture.yaml
+      ansible.builtin.copy:
+        content: |
+          #!/usr/bin/env python3
+
+          import cv2
+          import sys
+
+          # open camera
+          cap = cv2.VideoCapture('/dev/video0', cv2.CAP_V4L)
+
+          # set dimensions
+          cap.set(cv2.CAP_PROP_FRAME_WIDTH, 2560)
+          cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1440)
+
+          # take frame
+          ret, frame = cap.read()
+          # write frame to file
+          cv2.imwrite('/tmp/{{ inventory_hostname }}.jpg', frame)
+          # release camera
+          cap.release()
+
+        dest: /tmp/get-picture.py
+        mode: 0755
+
+
+    - name: Execute get-picture.yaml
+      ansible.builtin.command: /tmp/get-picture.py
+
+    - name: Download picutre
+      ansible.builtin.fetch:
+        src: "/tmp/{{ inventory_hostname }}.jpg"
+        dest: "camera-test-{{ inventory_hostname }}.jpg"
+        flat: yes
+

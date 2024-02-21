@@ -1,0 +1,45 @@
+---
+- hosts: robots
+  gather_facts: false
+  tasks:
+    - name: Stop microshift
+      ansible.builtin.systemd_service:
+        state: stopped
+        name: microshift.service
+
+    - name: Clean /var/lib/microshift
+      ansible.builtin.file:
+        state: absent
+        path: /var/lib/microshift
+
+    - name: Start microshift
+      ansible.builtin.systemd_service:
+        state: started
+        name: microshift.service
+
+    - name: Wait for /var/lib/microshift/resources/kubeadmin/kubeconfig
+      ansible.builtin.wait_for:
+        path: /var/lib/microshift/resources/kubeadmin/kubeconfig
+        state: present
+        msg: Timeout to find file kubeconfig
+
+    - name: ~/.kube/
+      ansible.builtin.file:
+        state: directory
+        path: ~/.kube/
+
+    - name: Install kubeconfig to root user
+      ansible.builtin.copy:
+        src: "/var/lib/microshift/resources/kubeadmin/kubeconfig"
+        dest: "~/.kube/config"
+        remote_src: yes
+
+    - name: Fetch kubeconfig
+      ansible.builtin.fetch:
+        src: "/var/lib/microshift/resources/kubeadmin/kubeconfig"
+        dest: "kubeconfig-{{ inventory_hostname }}"
+        flat: yes
+
+    - name: Wait for api
+      ansible.builtin.wait_for:
+        port: 6443

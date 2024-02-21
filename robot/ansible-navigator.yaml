@@ -1,0 +1,12 @@
+---
+ansible-navigator:
+  execution-environment:
+    #container-options:
+    #  - --net=host
+    image: registry.redhat.io/ansible-automation-platform-24/ee-minimal-rhel8@sha256:4f9066d475b006dc90ecc77d017f8a8233758016589b5d68bc08966908337732
+  logging:
+    level: info
+  mode: stdout
+  playbook-artifact:
+    enable: true
+    save-as: /tmp/robots-{playbook_name}-artifact-{time_stamp}.json
