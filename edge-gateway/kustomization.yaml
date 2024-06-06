@@ -4,3 +4,4 @@ kind: Kustomization
 resources:
 # Do we need pipeline here?
 # - pipeline-operator/
+- hubcontroller-rest-gitops/
