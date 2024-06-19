@@ -30,6 +30,24 @@ curl -X GET -k https://web-hub-controller.apps.edge-gateway.lan/api/robot/distan
 
 ```
 
+## Update boto access
+
+
+
+```
+argocd login --username admin openshift-gitops-server-openshift-gitops.apps.edge-gateway.lan:443
+
+export ROBOT=data
+scp $ROBOT.robot.lan:/var/lib/microshift/resources/kubeadmin/kubeconfig ${ROBOT}.kubeconfig
+export KUBECONFIG=${ROBOT}.kubeconfig
+oc config set-cluster ${ROBOT} --server=https://${ROBOT}.robot.lan:6443 --insecure-skip-tls-verify=true
+oc config set-context $ROBOT  --user=user --cluster=${ROBOT}
+oc config use-context $ROBOT
+
+argocd cluster add $(oc config current-context )
+
+```
+
 ## ToDo - rewrite
 
 Added cluster to argocd instance
