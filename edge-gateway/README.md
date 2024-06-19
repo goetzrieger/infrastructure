@@ -1,16 +1,36 @@
 # Edge gateway
 
+Login into <https://console-openshift-console.apps.edge-gateway.lan/>
 
-During the demo we using OpenShift Local running on the presenter laptop
+## Bootstrap
 
-**Required:**
- * Running openshift local, follow the [officia documetation](https://developers.redhat.com/products/openshift-local/overview)
+Please take a look into <https://github.com/cloud-native-robotz-hackathon/edge-gateway-gitops>
 
 
-Install OpenShift GitOps & OpenShift Pipelines via:
-```bash
-oc apply -k openshift-local/
+## hub-controller test commands:
+
+
 ```
+export ROBOT=data
+
+curl -X POST -v -k https://web-hub-controller.apps.edge-gateway.lan/api/robot/forward/10?user_key=$ROBOT
+curl -X POST -v -k https://web-hub-controller.apps.edge-gateway.lan/api/robot/backward/10?user_key=$ROBOT
+
+curl -X POST -v -k https://web-hub-controller.apps.edge-gateway.lan/api/robot/left/10?user_key=$ROBOT
+
+
+curl -X POST -v -k https://web-hub-controller.apps.edge-gateway.lan/api/robot/right/10?user_key=$ROBOT
+
+
+curl -X GET -k https://web-hub-controller.apps.edge-gateway.lan/api/robot/remote_status?user_key=data
+
+curl -X GET -k https://web-hub-controller.apps.edge-gateway.lan/api/robot/power?user_key=data
+
+curl -X GET -k https://web-hub-controller.apps.edge-gateway.lan/api/robot/distance?user_key=data
+
+```
+
+## ToDo - rewrite
 
 Added cluster to argocd instance
 
