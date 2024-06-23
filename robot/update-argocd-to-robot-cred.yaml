@@ -1,0 +1,58 @@
+---
+- hosts: robots
+  gather_facts: false
+  tasks:
+
+    - name: Fetch kubeconfig
+      ansible.builtin.fetch:
+        src: "/var/lib/microshift/resources/kubeadmin/kubeconfig"
+        dest: "kubeconfig-{{ inventory_hostname }}"
+        flat: yes
+
+    - name: Adjust kubeconfig
+      connection: local
+      ansible.builtin.shell:
+
+        export KUBECONFIG=kubeconfig-{{ inventory_hostname }};
+        export ROBOT={{ inventory_hostname.split('.') | first }};
+        kubectl config set-cluster ${ROBOT} --server=https://{{ inventory_hostname }}:6443 --insecure-skip-tls-verify=true;
+        kubectl config set-context ${ROBOT} --user=user --cluster=${ROBOT};
+        kubectl config use-context ${ROBOT};
+
+    - name: Slurp kubeconfig
+      connection: local
+      ansible.builtin.slurp:
+        src: kubeconfig-{{ inventory_hostname }}
+      register: kubeconfig
+
+    - ansible.builtin.set_fact:
+        cred: "{{ kubeconfig['content'] | b64decode |  from_yaml | community.general.json_query('users[0].user') }}"
+
+    - ansible.builtin.set_fact:
+        config: |
+          {
+            "tlsClientConfig": {
+              "insecure": true,
+              "certData": "{{  cred['client-certificate-data'] }}",
+              "keyData": "{{  cred['client-key-data'] }}"
+            }
+          }
+
+    - name: Create a argocd cluster secret
+      connection: local
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: "edge-gateway"
+        definition:
+          apiVersion: v1
+          kind: Secret
+          type: Opaque
+          metadata:
+            name: "cluster-{{ inventory_hostname }}"
+            namespace: openshift-gitops
+            labels:
+              argocd.argoproj.io/secret-type: cluster
+          stringData:
+            name: "{{ inventory_hostname }}"
+            server: "https://{{ inventory_hostname }}:6443"
+            config: "{{ config | to_json  }}"

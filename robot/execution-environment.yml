@@ -1,0 +1,18 @@
+---
+version: 3
+
+options:
+  package_manager_path: /usr/bin/microdnf
+
+images:
+  base_image:
+    name: 'registry.redhat.io/ansible-automation-platform-24/ee-supported-rhel9:1.0'
+
+dependencies:
+  galaxy:
+    collections:
+# ToDo: add version numbers!
+      - name: community.general
+      - name: community.kubernetes
+      - name: kubernetes.core
+      - name: ansible.posix
