@@ -1,4 +1,15 @@
-# Rebuild execution environment
+# Automation
+
+```bash
+cd infrastructure/automation/
+export KUBECONFIG=kubeconfig-data-center
+oc login -u admin --insecure-skip-tls-verify https://api.cluster-...
+
+export KUBECONFIG=kubeconfig-edge-gateway
+oc login -u admin --insecure-skip-tls-verify https://edge-gateway.lan:6443
+```
+
+## Rebuild execution environment
 
 ```bash
 podman login registry.redhat.io
@@ -13,3 +24,4 @@ ansible-builder build \
 podman login quay.io
 podman push quay.io/cloud-native-robotz-hackathon/infrastructure-robot-execution-environment:$VERSION
 ```
+
