@@ -1,0 +1,118 @@
+---
+- hosts: localhost
+  gather_facts: false
+  connection: local
+  tasks:
+
+    - name: Create a namespaces
+      with_items:
+        - edge-gateway
+        - data-center
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: "kubeconfig-{{ item }}"
+        definition:
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: red-hat-service-interconnect-{{ item }}
+          spec: {}
+
+    - name: Start skupper at data-center
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: "kubeconfig-data-center"
+        definition:
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: skupper-site
+            namespace: red-hat-service-interconnect-data-center
+          data:
+            cluster-permissions: "false"
+            console: "true"
+            console-authentication: internal
+            console-password: ""
+            console-user: ""
+            enable-skupper-events: "true"
+            flow-collector: "true"
+            ingress: route
+            name: red-hat-service-interconnect-data-center
+            router-console: "false"
+            router-logging: ""
+            router-mode: interior
+            service-controller: "true"
+            service-sync: "true"
+
+    - name: Start skupper at edge-gateway
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: "kubeconfig-edge-gateway"
+        definition:
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: skupper-site
+            namespace: red-hat-service-interconnect-edge-gateway
+          data:
+            cluster-permissions: "true"
+            console: "false"
+            console-authentication: internal
+            console-password: ""
+            console-user: ""
+            enable-skupper-events: "true"
+            flow-collector: "false"
+            ingress: route
+            name: red-hat-service-interconnect-edge-gateway
+            router-console: "false"
+            router-logging: ""
+            router-mode: interior
+            service-controller: "true"
+            service-sync: "true"
+
+    - name: Token request for edge-gateway
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: "kubeconfig-data-center"
+        definition:
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            namespace: red-hat-service-interconnect-data-center
+            labels:
+              skupper.io/type: connection-token-request
+            name: edge-gateway
+
+    - name: Fetch secret
+      kubernetes.core.k8s_info:
+        kubeconfig: "kubeconfig-data-center"
+        api_version: v1
+        kind: Secret
+        name: edge-gateway
+        namespace: red-hat-service-interconnect-data-center
+      register: token_secret
+      retries: 5
+      until: token_secret.resources[0].metadata.labels['skupper.io/type'] == "connection-token"
+
+    -
+
+    - name: Extract & change token
+      ansible.builtin.set_fact:
+        token: "{{ token_secret.resources[0] | combine(to_change, recursive=true)  }}"
+      vars:
+        to_change:
+          metadata:
+            namespace: red-hat-service-interconnect-edge-gateway
+            resourceVersion:
+            uid:
+            creationTimestamp:
+
+    - debug:
+        var: token
+
+
+    - name: Apply token at edge-gateway
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: "kubeconfig-edge-gateway"
+        definition: "{{ token  }}"

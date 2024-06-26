@@ -1,0 +1,19 @@
+---
+- hosts: localhost
+  gather_facts: false
+  connection: local
+  tasks:
+
+    - name: Destroy a namespaces
+      with_items:
+        - edge-gateway
+        - data-center
+      kubernetes.core.k8s:
+        state: absent
+        kubeconfig: "kubeconfig-{{ item }}"
+        definition:
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: red-hat-service-interconnect-{{ item }}
+          spec: {}
