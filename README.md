@@ -9,8 +9,10 @@ All about infrastructure provisioning for the robot hackathon.
 |Component (Folder)|Description|
 |---|---|
 |[datacenter/](datacenter/)|Main OpenShift Cluster for Training and development|
-|[edge-gateway/](edge-gateway/)| Single Node OpenShift to manage all robotz.
-|[robot/](robot/)|All about the robot provisioning and configuration.
+|[edge-gateway/](edge-gateway/)| Single Node OpenShift to manage all robotz.|
+|[robot/](robot/)|All about the robot provisioning and configuration.|
+|[automation/](automation/)|Automation for the final configuration and robot
+automation|
 
 ## Networking
 
