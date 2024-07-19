@@ -1,0 +1,78 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: model-image-build
+spec:
+  params:
+  - name: MODEL_VERSION
+    type: string
+    default: "latest"
+
+  tasks:
+  - name: model-image-build
+    params:
+    - name: MODEL_VERSION
+      value: $(params.MODEL_VERSION)
+    taskSpec:
+      params:
+        - name: MODEL_VERSION
+      steps:
+        - name: download
+          image: quay.io/rbo/ubi-awscli:latest
+          resources: {}
+          env:
+            - name: MODEL_VERSION
+              value: $(params.MODEL_VERSION)
+          envFrom:
+            - secretRef:
+                name: workbench-bucket-ai-connection
+          script: |-
+            set -x
+            aws configure list
+            aws s3 --no-verify-ssl cp \
+              s3://$AWS_S3_BUCKET/models/model-$(params.MODEL_VERSION).onnx \
+              /workspace/source/model.onnx \
+              --endpoint-url $AWS_S3_ENDPOINT
+        - name: model-image-build
+          image: registry.redhat.io/ubi9/buildah:9.4
+          securityContext:
+            capabilities:
+              add:
+              - SETFCAP
+          env:
+            - name: NAMESPACE
+              value: $(context.pipelineRun.namespace)
+            - name: MODEL_VERSION
+              value: $(params.MODEL_VERSION)
+          script: |-
+
+            set -x
+
+            cd /workspace/source/
+
+            echo 'FROM registry.access.redhat.com/ubi9/ubi-micro:latest' > Containerfile
+            echo 'ADD ./model.onnx /' >> Containerfile
+            echo 'ENV TARGET_FILE_LOCATION=/dst/' >> Containerfile
+            echo 'CMD cp -rvp /model.onnx $TARGET_FILE_LOCATION' >> Containerfile
+
+            cat Containerfile
+
+            buildah bud --storage-driver=vfs --platform linux/arm64/v8 \
+              --format=oci -f Containerfile \
+              -t image-registry.openshift-image-registry.svc.cluster.local:5000/$NAMESPACE/model-container:$MODEL_VERSION \
+              .
+
+            buildah --storage-driver=vfs push \
+              image-registry.openshift-image-registry.svc.cluster.local:5000/$NAMESPACE/model-container:$MODEL_VERSION
+
+      volumes:
+        - name: aws-credentials
+          secret:
+            secretName: aws-credentials
+      workspaces:
+      - name: source
+    workspaces:
+    - name: source
+      workspace: init-container-build-space
+  workspaces:
+  - name: init-container-build-space
