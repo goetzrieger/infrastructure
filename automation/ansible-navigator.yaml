@@ -2,6 +2,9 @@
 ansible-navigator:
   execution-environment:
     image: quay.io/cloud-native-robotz-hackathon/infrastructure-robot-execution-environment:202406232143
+    environment-variables:
+      pass:
+        - K8S_AUTH_KUBECONFIG
   logging:
     level: info
   mode: stdout

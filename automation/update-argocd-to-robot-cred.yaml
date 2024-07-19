@@ -42,7 +42,7 @@
       connection: local
       kubernetes.core.k8s:
         state: present
-        kubeconfig: "edge-gateway"
+        kubeconfig: "kubeconfig-edge-gateway"
         definition:
           apiVersion: v1
           kind: Secret

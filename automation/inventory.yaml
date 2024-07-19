@@ -10,6 +10,7 @@ robots:
       team: team-1
     ultron.robot.lan:
     terminator.robot.lan:
+      team: team-1
     abcwarrior.robot.lan:
 
 berlin:
