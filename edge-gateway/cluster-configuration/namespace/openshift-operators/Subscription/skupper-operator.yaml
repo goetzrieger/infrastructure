@@ -4,7 +4,11 @@ metadata:
   name: skupper-operator
   namespace: openshift-operators
 spec:
-  channel: stable-1
+  config:
+    env:
+    - name: CLUSTER_PERMISSIONS_ALLOWED
+      value: "true"
+  channel: stable
   installPlanApproval: Automatic
   name: skupper-operator
   source: redhat-operators
