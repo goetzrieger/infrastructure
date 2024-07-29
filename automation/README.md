@@ -19,8 +19,9 @@ ansible-builder build \
     --verbosity 3 \
     --container-runtime podman \
     --file execution-environment-fedora-based.yml \
-    --tag quay.io/cloud-native-robotz-hackathon/infrastructure-robot-execution-environment:$VERSION
+    --extra-build-cli-args "--platform linux/amd64,linux/arm64  --manifest quay.io/cloud-native-robotz-hackathon/infrastructure-robot-execution-environment:$VERSION"
 
+    --tag quay.io/cloud-native-robotz-hackathon/infrastructure-robot-execution-environment:$VERSION \
 podman login quay.io
 podman push quay.io/cloud-native-robotz-hackathon/infrastructure-robot-execution-environment:$VERSION
 ```
