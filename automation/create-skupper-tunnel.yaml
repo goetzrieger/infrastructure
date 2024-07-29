@@ -94,8 +94,6 @@
       retries: 5
       until: token_secret.resources[0].metadata.labels['skupper.io/type'] == "connection-token"
 
-    -
-
     - name: Extract & change token
       ansible.builtin.set_fact:
         token: "{{ token_secret.resources[0] | combine(to_change, recursive=true)  }}"
@@ -107,12 +105,25 @@
             uid:
             creationTimestamp:
 
-    - debug:
-        var: token
-
-
     - name: Apply token at edge-gateway
       kubernetes.core.k8s:
         state: present
         kubeconfig: "kubeconfig-edge-gateway"
         definition: "{{ token  }}"
+  
+    # skupper expose --target-namespace hub-controller deployment hub-controller-live  --port 8080
+    - name: Expose hub-controller-live
+      kubernetes.core.k8s:
+        kind: ConfigMap
+        state: present
+        kubeconfig: "kubeconfig-edge-gateway"
+        name: skupper-services
+        namespace: red-hat-service-interconnect-edge-gateway
+        resource_definition:
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: skupper-services
+            namespace: red-hat-service-interconnect-edge-gateway
+          data:
+            hub-controller-live: '{"address":"hub-controller-live","protocol":"tcp","ports":[8080],"exposeIngress":"","targets":[{"name":"hub-controller-live","selector":"app=hub-controller-live","targetPorts":{"8080":8080},"namespace":"hub-controller"}]}'
