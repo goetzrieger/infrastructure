@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: k8s-image-puller
+data:
+  IMAGES: |
+    object-detection-v1-3-2=quay.io/cloud-native-robotz-hackathon/workbench-object-detection:v1.3.2
+  DAEMONSET_NAME: image-puller
+  CACHING_INTERVAL_HOURS: "1"
+  NAMESPACE: image-puller
+  CACHING_MEMORY_REQUEST: 10Mi
+  CACHING_MEMORY_LIMIT: 20Mi
+  CACHING_CPU_REQUEST: ".05"
+  CACHING_CPU_LIMIT: ".2"
+  NODE_SELECTOR: |
+    {
+      "node-role.kubernetes.io/worker": "",
+      "kubernetes.io/arch": "amd64"
+    }
+  IMAGE_PULL_SECRETS: ""
+  AFFINITY: "{}"
+  KIP_IMAGE: quay.io/eclipse/kubernetes-image-puller:a9ab712
+  TOLERATIONS: "[]"

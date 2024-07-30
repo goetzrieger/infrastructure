@@ -1,0 +1,31 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  labels:
+    app: image-puller
+  name: image-puller
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: image-puller
+  strategy:
+    type: "Recreate"
+  template:
+    metadata:
+      labels:
+        app: image-puller
+    spec:
+      containers:
+      - name: image-puller
+        image: quay.io/eclipse/kubernetes-image-puller:a9ab712
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: DEPLOYMENT_NAME
+          value: image-puller
+        envFrom:
+        - configMapRef:
+            name: k8s-image-puller
+      serviceAccountName: k8s-image-puller
+
