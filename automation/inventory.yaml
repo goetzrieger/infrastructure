@@ -6,19 +6,19 @@ all:
 
 robots:
   hosts:
-    data.robot.lan:
+    data.lan:
       team: team-1
-    ultron.robot.lan:
-    terminator.robot.lan:
-      team: team-1
-    abcwarrior.robot.lan:
+    ultron.lan:
+    terminator.lan:
+      team: team-2
+    abcwarrior.lan:
 
 berlin:
   hosts:
-    terminator.robot.lan:
-    abcwarrior.robot.lan:
+    terminator.lan:
+    abcwarrior.lan:
 
 munich:
   hosts:
-    data.robot.lan:
-    ultron.robot.lan:
+    data.lan:
+    terminator.lan:
