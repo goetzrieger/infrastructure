@@ -9,32 +9,45 @@
         dest: "kubeconfig-{{ inventory_hostname }}"
         flat: yes
 
-    - name: Adjust kubeconfig
+    - name: Read kubeconfig
       connection: local
-      ansible.builtin.shell:
+      include_vars:
+        file: "kubeconfig-{{ inventory_hostname }}"
+        name: kubeconfig
 
-        export KUBECONFIG=kubeconfig-{{ inventory_hostname }};
-        export ROBOT={{ inventory_hostname.split('.') | first }};
-        kubectl config set-cluster ${ROBOT} --server=https://{{ inventory_hostname }}:6443 --insecure-skip-tls-verify=true;
-        kubectl config set-context ${ROBOT} --user=user --cluster=${ROBOT};
-        kubectl config use-context ${ROBOT};
-
-    - name: Slurp kubeconfig
+    - name: Rebuild new kubeconfig
+      set_fact:
+        kubeconfig: "{{ kubeconfig | combine(fields_to_change, recursive=true) }}"
+      vars:
+        fields_to_change:
+          clusters:
+            - name: "{{ inventory_hostname.split('.') | first }}"
+              cluster:
+                server: "https://{{ inventory_hostname }}:6443"
+                insecure-skip-tls-verify: true
+          contexts:
+            - name: "{{ inventory_hostname.split('.') | first }}"
+              context: 
+                cluster: "{{ inventory_hostname.split('.') | first }}"
+                namespace: "default"
+                user: "user"
+          current-context: "{{ inventory_hostname.split('.') | first }}"
+  
+    - name: "Write kubeconfig-{{ inventory_hostname }}"
       connection: local
-      ansible.builtin.slurp:
-        src: kubeconfig-{{ inventory_hostname }}
-      register: kubeconfig
+      copy:
+        content: "{{ kubeconfig | to_nice_yaml }}"
+        dest: "kubeconfig-{{ inventory_hostname }}"
 
-    - ansible.builtin.set_fact:
-        cred: "{{ kubeconfig['content'] | b64decode |  from_yaml | community.general.json_query('users[0].user') }}"
 
-    - ansible.builtin.set_fact:
+    - name: Build config
+      ansible.builtin.set_fact:
         config: |
           {
             "tlsClientConfig": {
               "insecure": true,
-              "certData": "{{  cred['client-certificate-data'] }}",
-              "keyData": "{{  cred['client-key-data'] }}"
+              "certData": "{{ kubeconfig.users[0].user['client-certificate-data'] }}",
+              "keyData": "{{ kubeconfig.users[0].user['client-key-data'] }}"
             }
           }
 
