@@ -18,7 +18,7 @@ spec:
         - name: MODEL_VERSION
       steps:
         - name: download
-          image: quay.io/rbo/ubi-awscli:latest
+          image: quay.io/cloud-native-robotz-hackathon/ubi-awscli:1.25.83
           resources: {}
           env:
             - name: MODEL_VERSION
