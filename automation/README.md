@@ -26,3 +26,13 @@ podman login quay.io
 podman push quay.io/cloud-native-robotz-hackathon/infrastructure-robot-execution-environment:$VERSION
 ```
 
+## Ansible-navigator in mac
+
+```
+podman machine init \
+    --volume /private:/private \
+    --volume /Volumes/Development:/Volumes/Development \
+    --volume /Users:/Users \
+    --volume /var/folders:/var/folders \
+    --memory 4096 test4
+```

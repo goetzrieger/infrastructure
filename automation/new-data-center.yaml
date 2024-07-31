@@ -1,0 +1,15 @@
+---
+- name: Reset MicroShift
+  import_playbook: microshift-reset.yaml
+  tags:
+    - reset-microshift
+
+- name: Rebuild skupper tunnel
+  import_playbook: create-skupper-tunnel.yaml
+  tags:
+    - skupper
+
+- name: Connect robots and teams
+  import_playbook: update-robot-to-team.yaml
+  tags:
+    - robot-to-team
