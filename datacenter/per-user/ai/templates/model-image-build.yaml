@@ -51,7 +51,6 @@ spec:
             cd /workspace/source/
 
             echo 'FROM registry.access.redhat.com/ubi9/ubi-micro:latest' > Containerfile
-            echo 'RUN mkdir -p /models/robot_onnx/1/' >> Containerfile
             echo 'ADD ./model.onnx /models/robot_onnx/1/' >> Containerfile
             echo 'ENV TARGET_FILE_LOCATION=/dst/' >> Containerfile
             echo 'CMD cp -rvp /models/* $TARGET_FILE_LOCATION' >> Containerfile
