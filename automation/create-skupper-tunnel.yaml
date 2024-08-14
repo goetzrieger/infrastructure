@@ -83,7 +83,7 @@
               skupper.io/type: connection-token-request
             name: edge-gateway
 
-    - name: Fetch secret
+    - name: Fetch secret from data-center
       kubernetes.core.k8s_info:
         kubeconfig: "kubeconfig-data-center"
         api_version: v1
@@ -91,7 +91,7 @@
         name: edge-gateway
         namespace: red-hat-service-interconnect-data-center
       register: token_secret
-      retries: 5
+      retries: 10
       until: token_secret.resources[0].metadata.labels['skupper.io/type'] == "connection-token"
 
     - name: Extract & change token
