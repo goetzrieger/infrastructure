@@ -40,15 +40,36 @@
         dest: "kubeconfig-{{ inventory_hostname }}"
         flat: yes
 
-    - name: Adjust kubeconfig
-      connection: local
-      ansible.builtin.shell:
 
-        export KUBECONFIG=kubeconfig-{{ inventory_hostname }};
-        export ROBOT={{ inventory_hostname.split('.') | first }};
-        kubectl config set-cluster ${ROBOT} --server=https://{{ inventory_hostname }}:6443 --insecure-skip-tls-verify=true;
-        kubectl config set-context ${ROBOT} --user=user --cluster=${ROBOT};
-        kubectl config use-context ${ROBOT};
+    - name: Read kubeconfig
+      delegate_to: localhost
+      include_vars:
+        file: "kubeconfig-{{ inventory_hostname }}"
+        name: kubeconfig
+
+    - name: Rebuild new kubeconfig
+      set_fact:
+        kubeconfig: "{{ kubeconfig | combine(fields_to_change, recursive=true) }}"
+      vars:
+        fields_to_change:
+          clusters:
+            - name: "{{ inventory_hostname.split('.') | first }}"
+              cluster:
+                server: "https://{{ inventory_hostname }}:6443"
+                insecure-skip-tls-verify: true
+          contexts:
+            - name: "{{ inventory_hostname.split('.') | first }}"
+              context: 
+                cluster: "{{ inventory_hostname.split('.') | first }}"
+                namespace: "default"
+                user: "user"
+          current-context: "{{ inventory_hostname.split('.') | first }}"
+  
+    - name: "Write kubeconfig-{{ inventory_hostname }}"
+      delegate_to: localhost
+      copy:
+        content: "{{ kubeconfig | to_nice_yaml }}"
+        dest: "kubeconfig-{{ inventory_hostname }}"
 
     - name: Wait for api
       ansible.builtin.wait_for:
