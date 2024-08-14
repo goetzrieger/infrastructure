@@ -55,8 +55,20 @@ At the [cloud-native-robotz-hackathon/edge-gateway-gitops](https://github.com/cl
 
 ```bash
 oc apply -k bootstrap/
+# Wait for all pods are ready in openshift-gitops namespace
+watch oc get pods -n openshift-gitops 
+
+# Add cluster-admin role to ArgoCD
+ oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:openshift-gitops:openshift-gitops-argocd-application-controller
+
+# Apply ArgoCD Application
+oc apply -f bootstrap/application.yaml
 
 ```
+
+Login into [Argocd WebUI](https://openshift-gitops-server-openshift-gitops.apps-crc.testing/) and sync all changes.
+
+![ArgocD screenshot](crc-argocd.png)
 
 ## Bring Data Center & Edge together
 
@@ -64,9 +76,28 @@ At the [cloud-native-robotz-hackathon/infrastructure](https://github.com/cloud-n
 
 
 ### Fetch credentials of Data Center
+
 ```bash
 export KUBECONFIG=$(pwd)/kubeconfig-data-center
 oc login -u admin --insecure-skip-tls-verify https://api.cluster-...
+
+# Connect edge to data center via skupper tunnel
+ansible-navigator run ./create-skupper-tunnel.yaml
+
+# Connect robots and teams
+ansible-navigator run ./update-robot-to-team.yaml -l data.lan
 ```
 
+In case the ansible-navigator can not reach your openshift local, try to run the playbooks localy:
 
+```bash
+ansible-galaxy collection install kubernetes.core
+ansible-galaxy collection install community.kubernetes
+ansible-galaxy collection install ansible.posix
+ansible-galaxy collection install community.general
+pip install jmespath
+pip install kubernetes
+
+ansible-playbook ./create-skupper-tunnel.yaml
+ansible-playbook ./update-robot-to-team.yaml -l data.lan\
+```
