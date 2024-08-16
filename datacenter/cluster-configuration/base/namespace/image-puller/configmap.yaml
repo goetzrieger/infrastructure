@@ -5,7 +5,7 @@ metadata:
 data:
   IMAGES: |
     object-detection-v1-3-2=quay.io/cloud-native-robotz-hackathon/workbench-object-detection:v1.3.2;
-    object-detection-runtime-v2-0-1=quay.io/mmurakam/runtimes:object-detection-v2.0.1
+    object-detection-runtime-v2-1-0=quay.io/mmurakam/runtimes:object-detection-v2.1.0
   DAEMONSET_NAME: image-puller
   CACHING_INTERVAL_HOURS: "1"
   NAMESPACE: image-puller
