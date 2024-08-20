@@ -4,7 +4,7 @@ metadata:
   name: k8s-image-puller
 data:
   IMAGES: |
-    object-detection-v1-3-2=quay.io/cloud-native-robotz-hackathon/workbench-object-detection:v1.3.2;
+    object-detection-v2-1-0=quay.io/cloud-native-robotz-hackathon/workbench-object-detection:v2.1.0;
     object-detection-runtime-v2-1-0=quay.io/mmurakam/runtimes:object-detection-v2.1.0
   DAEMONSET_NAME: image-puller
   CACHING_INTERVAL_HOURS: "1"
