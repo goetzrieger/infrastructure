@@ -5,7 +5,10 @@ metadata:
 data:
   IMAGES: |
     object-detection-v2-1-0=quay.io/cloud-native-robotz-hackathon/workbench-object-detection:v2.1.0;
-    object-detection-runtime-v2-1-0=quay.io/mmurakam/runtimes:object-detection-v2.1.0
+    object-detection-runtime-v2-1-0=quay.io/mmurakam/runtimes:object-detection-v2.1.0;
+    code-rhel8=registry.redhat.io/devspaces/code-rhel8@sha256:1f92b2606c7f63074172b9be805f962f61180f5558602d78480fa13f9c8a0129;
+    devworkspace-project-clone-rhel8=registry.redhat.io/devworkspace/devworkspace-project-clone-rhel8@sha256:108b825c74a0dab924748e247e1c97811b3e5a7bccfff6c7610be175a0739ae3;
+    udi-rhel8=registry.redhat.io/devspaces/udi-rhel8@sha256:bc5d28c434089a312ab0944662e7702481ca4e898ef278cf61c0f683f35718df
   DAEMONSET_NAME: image-puller
   CACHING_INTERVAL_HOURS: "1"
   NAMESPACE: image-puller
