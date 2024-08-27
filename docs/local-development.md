@@ -11,6 +11,7 @@ The goal is to improve the Workshops with just
 
 * Connect to wired network & findout ip address
 * Connect via SSH (wire) to robot
+* The robot private keyfile needs to be named ~/.ssh/robot-hackathon
 * Hostname should localhost: Set the hostname via
   ```
   echo "192.168.66.70 data.lan" | sudo tee -a /etc/hosts
