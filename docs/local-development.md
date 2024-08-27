@@ -27,7 +27,7 @@ ansible-navigator run ./microshift-reset.yaml -l data.lan
 ```
 
 
-## Prepare OpenShift Local / CRC (Edge-dateway)
+## Prepare OpenShift Local / CRC (Edge-Gateway)
 
 ### Start OpenShift Local
 
