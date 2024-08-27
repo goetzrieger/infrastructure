@@ -41,14 +41,14 @@ At the [cloud-native-robotz-hackathon/infrastructure](https://github.com/cloud-n
 
 ```bash
 cd automation
-export KUBECONFIG=$(PWD)/kubeconfig-edge-gateway
+export KUBECONFIG=$(pwd)/kubeconfig-edge-gateway
 
 crc console --credentials
 # Copy past oc admin login command
 oc login -u kubeadmin -p xxx-xx-xx-xxx https://api.crc.testing:6443
 ```
 
-### Deploy / Configure 
+### Deploy / Configure
 
 At the [cloud-native-robotz-hackathon/edge-gateway-gitops](https://github.com/cloud-native-robotz-hackathon/edge-gateway-gitops) repo:
 
@@ -56,7 +56,7 @@ At the [cloud-native-robotz-hackathon/edge-gateway-gitops](https://github.com/cl
 ```bash
 oc apply -k bootstrap/
 # Wait for all pods are ready in openshift-gitops namespace
-watch oc get pods -n openshift-gitops 
+watch oc get pods -n openshift-gitops
 
 # Add cluster-admin role to ArgoCD
  oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:openshift-gitops:openshift-gitops-argocd-application-controller
@@ -66,7 +66,7 @@ oc apply -f bootstrap/application.yaml
 
 ```
 
-Login into [Argocd WebUI](https://openshift-gitops-server-openshift-gitops.apps-crc.testing/) and sync all changes.
+Login into [Argocd WebUI](https://openshift-gitops-server-openshift-gitops.apps-crc.testing/) with user "admin" and this [password](https://console-openshift-console.apps-crc.testing/k8s/ns/openshift-gitops/secrets/openshift-gitops-cluster) and sync all changes.
 
 ![ArgocD screenshot](crc-argocd.png)
 
@@ -84,11 +84,13 @@ oc login -u admin --insecure-skip-tls-verify https://api.cluster-...
 # Connect edge to data center via skupper tunnel
 ansible-navigator run ./create-skupper-tunnel.yaml
 
+If the playbook fails, this is propably due to a [bug](https://github.com/cloud-native-robotz-hackathon/infrastructure/issues/66) where the Interconnect Controller doesn't initalize correctly. You can restart the Interconnect Pod (skupper-site-controller-xxx...) in the openshift-operators project as a workaround. Once done, rerun the Ansible playbook.
+
 # Connect robots and teams
 ansible-navigator run ./update-robot-to-team.yaml -l data.lan
 ```
 
-In case the ansible-navigator can not reach your openshift local, try to run the playbooks localy:
+In case the ansible-navigator can not reach your openshift local, try to run the playbooks locally:
 
 ```bash
 ansible-galaxy collection install kubernetes.core
@@ -101,3 +103,17 @@ pip install kubernetes
 ansible-playbook ./create-skupper-tunnel.yaml
 ansible-playbook ./update-robot-to-team.yaml -l data.lan\
 ```
+
+## Add Robot Mapping to HubController
+In your Openshift Local open the ConfigMap [robot-mapping-configmap](https://console-openshift-console.apps-crc.testing/k8s/ns/hub-controller/configmaps/robot-mapping-configmap) and edit the Roboname (user_key) mapping(e.g. data )to your Robot hostname (e.g. data.lan)
+
+Restart the [Hubcontroller Pod](https://console-openshift-console.apps-crc.testing/k8s/ns/hub-controller/core~v1~Pod)
+
+Now test the API Connection from the DC Cluster, for example from the WebTerminal (make sure to replace data your user_key) :
+
+```bash
+curl http://hub-controller-live.red-hat-service-interconnect-data-center.svc.cluster.local:8080/api/robot/status?user_key=data
+
+curl -X POST http://hub-controller-live.red-hat-service-interconnect-data-center.svc.cluster.local:8080/api/robot/forward/1?user_key=data
+```
+
