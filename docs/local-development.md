@@ -79,6 +79,7 @@ At the [cloud-native-robotz-hackathon/infrastructure](https://github.com/cloud-n
 ### Fetch credentials of Data Center
 
 ```bash
+cd automation
 export KUBECONFIG=$(pwd)/kubeconfig-data-center
 oc login -u admin --insecure-skip-tls-verify https://api.cluster-...
 
