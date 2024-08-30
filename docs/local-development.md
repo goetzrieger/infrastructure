@@ -84,9 +84,11 @@ oc login -u admin --insecure-skip-tls-verify https://api.cluster-...
 
 # Connect edge to data center via skupper tunnel
 ansible-navigator run ./create-skupper-tunnel.yaml
+```
 
 If the playbook fails, this is propably due to a [bug](https://github.com/cloud-native-robotz-hackathon/infrastructure/issues/66) where the Interconnect Controller doesn't initalize correctly. You can restart the Interconnect Pod (skupper-site-controller-xxx...) in the openshift-operators project as a workaround. Once done, rerun the Ansible playbook.
 
+```bash
 # Connect robots and teams
 ansible-navigator run ./update-robot-to-team.yaml -l data.lan
 ```
