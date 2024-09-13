@@ -3,6 +3,11 @@ kind: Deployment
 metadata:
   labels:
     app: hub-controller-live
+    app.kubernetes.io/managed-by: quarkus
+    app.openshift.io/runtime: quarkus
+  annotations:
+    app.openshift.io/vcs-uri: git@github.com:cloud-native-robotz-hackathon/hubcontroller-rest-quarkus.git
+    app.quarkus.io/vcs-uri: https://github.com/cloud-native-robotz-hackathon/hubcontroller-rest-quarkus.git
   name: hub-controller-live
 spec:
   replicas: 1
@@ -28,36 +33,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: metadata.namespace
-        image: quay.io/cloud-native-robotz-hackathon/hubcontroller-rest:latest
+        image: quay.io/cloud-native-robotz-hackathon/hubcontroller-rest-quarkus:latest-native
         imagePullPolicy: IfNotPresent
-        livenessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /health
-            port: 8080
-            scheme: HTTP
-          initialDelaySeconds: 180
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 1
-        name: spring-boot
-        ports:
-        - containerPort: 8080
-          name: http
-          protocol: TCP
-        - containerPort: 9779
-          name: prometheus
-          protocol: TCP
-        - containerPort: 8778
-          name: jolokia
-          protocol: TCP
-        readinessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /health
-            port: 8080
-            scheme: HTTP
-          initialDelaySeconds: 10
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 1
+        name: hub-controller
+

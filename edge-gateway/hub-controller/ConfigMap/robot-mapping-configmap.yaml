@@ -2,7 +2,7 @@ apiVersion: v1
 data:
   MAP: |
     {
-      "data": "data.robot.lan"
+      "someRobotToken": "someRobotAddress"
     }
 immutable: false
 kind: ConfigMap
