@@ -7,12 +7,24 @@ all:
 robots:
   hosts:
     data.lan:
-      team: team-1
-    ultron.lan:
-    terminator.lan:
-      team: team-2
-    abcwarrior.lan:
+      team: team-7
+    #ultron.lan:
+    #terminator.lan:
+    #  team: team-2
+    #abcwarrior.lan:
 
+    t-1000.lan:
+      team: team-2
+    c3po.lan:
+      team: team-4
+    marc13.lan:
+      team: team-6
+    r2d2.lan:
+      team: team-5
+    marvin.lan:
+      team: team-3
+    gort.lan:
+      team: team-1
 berlin:
   hosts:
     terminator.lan:
@@ -21,4 +33,11 @@ berlin:
 munich:
   hosts:
     data.lan:
-    terminator.lan:
+    #terminator.lan:
+    #
+    t-1000.lan:
+    c3po.lan:
+    marc13.lan:
+    r2d2.lan:
+    marvin.lan:
+    gort.lan:
