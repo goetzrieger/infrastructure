@@ -1,0 +1,33 @@
+---
+- hosts: robots
+  gather_facts: true
+  tasks:
+
+    - name: Slurp /robot-image-version
+      ansible.builtin.slurp:
+        src: /robot-image-version
+      register: robot_image_version
+    
+    - name: Check robot image version
+      fail:
+        msg: "Please check robot image version"
+      #when: robot_image_version['content'] | b64decode == robot-hackathon-image.20240726
+      when: robot_image_version['content'] != "cm9ib3QtaGFja2F0aG9uLWltYWdlLjIwMjQwNzI2Cg=="
+
+    - name: Rollout /etc/issue
+      ansible.builtin.copy:
+        content: |
+          Ubuntu 22.04.4 LTS \n \l
+          eth0: \4{eth0}
+          wlan0: \4{wlan0}
+        dest: /etc/issue
+
+    - name: Rollout /etc/hosts
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        search_string: "{{ ansible_default_ipv4.address }}"
+        line: "{{ ansible_default_ipv4.address }} robot.local {{ inventory_hostname }}"
+        owner: root
+        group: root
+        mode: '0644'
+
