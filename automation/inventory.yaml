@@ -41,3 +41,22 @@ munich:
     r2d2.lan:
     marvin.lan:
     gort.lan:
+
+thebox:
+  hosts:
+    data.lan:
+    t-1000.lan:
+    c3po.lan:
+    marc13.lan:
+    r2d2.lan:
+    marvin.lan:
+    gort.lan:
+    #ultron.lan
+
+    
+
+
+
+
+
+
