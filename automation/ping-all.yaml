@@ -1,5 +1,5 @@
 ---
-- hosts: thebox
+- hosts: robots
   gather_facts: false
   tasks:
     - name: Ping

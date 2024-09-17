@@ -20,11 +20,10 @@ robots:
       team: team-6
     data.lan:
       team: team-7
-# Not ready yet
-#    terminator.lan:
-#      team: team-8
-#    ultron.lan:
-#      team: team-9
+    terminator.lan:
+      team: team-8
+    ultron.lan:
+      team: team-9
 
 berlin:
   hosts:
