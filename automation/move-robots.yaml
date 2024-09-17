@@ -1,0 +1,23 @@
+---
+- hosts: robots
+  gather_facts: false
+  tasks:
+    - name: Backward 
+      ansible.builtin.uri:
+        url:  http://robot.local:5000/backward/1
+        method: POST
+
+    - name: Forward 
+      ansible.builtin.uri:
+        url:  http://robot.local:5000/forward/1
+        method: POST
+
+    - name: 360 
+      ansible.builtin.uri:
+        url:  http://robot.local:5000/left/360
+        method: POST
+
+    - name: 360 
+      ansible.builtin.uri:
+        url:  http://robot.local:5000/right/360
+        method: POST
