@@ -27,8 +27,8 @@ robots:
 
 berlin:
   hosts:
-    terminator.lan:
-    abcwarrior.lan:
+    number5.lan:
+      team: team-1
 
 munich:
   hosts:
@@ -53,7 +53,7 @@ thebox:
     gort.lan:
     ultron.lan:
 
-    
+
 
 
 
