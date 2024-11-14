@@ -116,8 +116,8 @@ Restart the [Hubcontroller Pod](https://console-openshift-console.apps-crc.testi
 Now test the API Connection from the DC Cluster, for example from the WebTerminal (make sure to replace data your user_key) :
 
 ```bash
-curl http://hub-controller-live.red-hat-service-interconnect-data-center.svc.cluster.local:8080/api/robot/status?user_key=data
+curl http://hub-controller-live.red-hat-service-interconnect-data-center.svc.cluster.local:8080/robot/status?user_key=data
 
-curl -X POST http://hub-controller-live.red-hat-service-interconnect-data-center.svc.cluster.local:8080/api/robot/forward/1?user_key=data
+curl -X POST http://hub-controller-live.red-hat-service-interconnect-data-center.svc.cluster.local:8080/robot/forward/1?user_key=data
 ```
 
