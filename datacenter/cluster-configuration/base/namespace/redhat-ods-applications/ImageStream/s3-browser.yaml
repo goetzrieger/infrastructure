@@ -26,6 +26,6 @@ spec:
       referencePolicy:
         type: Local
       annotations:
-        opendatahub.io/notebook-python-dependencies:
-        opendatahub.io/notebook-software:
+        opendatahub.io/notebook-python-dependencies: ''
+        opendatahub.io/notebook-software: ''
         opendatahub.io/workbench-image-recommended: "true"
