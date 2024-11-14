@@ -21,7 +21,8 @@ spec:
       from:
         kind: DockerImage
         name: quay.io/rh-aiservices-bu/odh-tec:1.2.0
-      importPolicy: {}
+      importPolicy:
+        importMode: Legacy
       referencePolicy:
         type: Local
       annotations:
