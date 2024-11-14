@@ -1,0 +1,30 @@
+kind: ImageStream
+apiVersion: image.openshift.io/v1
+metadata:
+  annotations:
+    opendatahub.io/notebook-image-name: "S3 Browser"
+    opendatahub.io/notebook-image-order: "2"
+    opendatahub.io/notebook-image-desc: >-
+      Browser to view the content of S3 Buckets.
+  name: s3-browser
+  namespace: redhat-ods-applications
+  labels:
+    component.opendatahub.io/name: jupyterhub
+    opendatahub.io/component: "true"
+    opendatahub.io/notebook-image: "true"
+    app.opendatahub.io/workbenches: "true"
+spec:
+  lookupPolicy:
+    local: true
+  tags:
+    - name: "2.1.0"
+      from:
+        kind: DockerImage
+        name: quay.io/rh-aiservices-bu/odh-tec:1.2.0
+      importPolicy: {}
+      referencePolicy:
+        type: Local
+      annotations:
+        opendatahub.io/notebook-python-dependencies:
+        opendatahub.io/notebook-software:
+        opendatahub.io/workbench-image-recommended: "true"
