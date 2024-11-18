@@ -1,0 +1,25 @@
+---
+- hosts: robots
+  gather_facts: true
+  vars:
+    test_function: left
+    test_value: 50
+  tasks:
+    - name: Call edgecontroller at the robot
+      ansible.builtin.uri:
+        url: "http://robot.local:5000/{{ test_function }}/{{ test_value }}"
+        method: POST 
+
+    # - name: Call hubcontroller runing on the edge-gateway
+    #   # connection: local
+    #   ansible.builtin.uri:
+    #     url: "http://web-hub-controller.apps.edge-gateway.lan/robot/{{ test_function }}/{{ test_value }}"
+    #     method: POST
+    #     body: "user_key={{ inventory_hostname }}"
+
+    # - name: Call hubcontroller via skupper tunnel
+    #   # connection: local
+    #   ansible.builtin.uri:
+    #     url: "https://thbc-red-hat-service-interconnect-data-center.apps.cluster-zbrd4.zbrd4.sandbox1885.opentlc.com/robot/{{ test_function }}/{{ test_value }}"
+    #     method: POST
+    #     body: "user_key={{ inventory_hostname }}"
