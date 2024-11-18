@@ -127,3 +127,25 @@
             namespace: red-hat-service-interconnect-edge-gateway
           data:
             hub-controller-live: '{"address":"hub-controller-live","protocol":"tcp","ports":[8080],"exposeIngress":"","targets":[{"name":"hub-controller-live","selector":"app=hub-controller-live","targetPorts":{"8080":8080},"namespace":"hub-controller"}]}'
+
+    - name: Expose hub-controll-live via route for testing purpose
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: "kubeconfig-data-center"
+        definition:
+          apiVersion: route.openshift.io/v1
+          kind: Route
+          metadata:
+            name: thbc
+            namespace: red-hat-service-interconnect-data-center
+          spec:
+            port:
+              targetPort: port8080
+            tls:
+              insecureEdgeTerminationPolicy: Redirect
+              termination: edge
+            to:
+              kind: Service
+              name: hub-controller-live
+              weight: 100
+            wildcardPolicy: None
