@@ -24,6 +24,8 @@ robots:
       team: team-8
     ultron.lan:
       team: team-9
+    # robocop.lan:
+
 
 berlin:
   hosts:
