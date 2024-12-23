@@ -1,3 +1,1 @@
 FROM quay.io/mmurakam/workbenches:object-detection-v2.1.0
-
-RUN  pip install jupyterlab-s3-browser 
