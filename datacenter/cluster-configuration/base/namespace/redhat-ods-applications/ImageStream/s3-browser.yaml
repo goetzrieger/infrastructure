@@ -20,7 +20,7 @@ spec:
     - name: "2.1.0"
       from:
         kind: DockerImage
-        name: quay.io/rh-aiservices-bu/odh-tec:1.2.0
+        name: quay.io/cloud-native-robotz-hackathon/odh-tec:56eb8b2
       importPolicy:
         importMode: Legacy
       referencePolicy:
