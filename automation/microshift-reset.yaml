@@ -1,5 +1,5 @@
 ---
-- hosts: robots
+- hosts: all
   gather_facts: true
   vars:
     disk_limit: 0.5
