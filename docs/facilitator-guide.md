@@ -1,4 +1,34 @@
+# Preparing to Run a Hackathon 
+
+## Setup OpenShift Environment
+
+This includes deploying the hackathon environment in RHDP and making sure an Edge Gateway is available.
+
+### Configure & Deploy RHDP Catalog Item "Cloud Native Robot Hackathon"
+
+-> Sizing
+
+### OpenShift Edge Gateway
+
+The Edge Gateway is a OCP SNO instance running on-premise in the same WIFI network as the robots. All connections from the hackathon OCP cluster to the robots go through it.
+
+-> Installation / configuration
+
+## Setup Hackathon On-Premise
+
+Setting up a robot hackathon includes:
+
+* Start the WIFI router and attach to the local WIFI
+  * SSID: robot-hackathon-78b09 Wifi-Password: Stored in RH Bitwarden collection
+  * The router is a preconfigured GL.iNet AXT1800, the configuration to restore is here (always use latest!): [https://drive.google.com/file/d/14T-on2pO0IIXGgDSKp70ZaBU8B9nxKvV/view?usp=drive_link](https://drive.google.com/drive/folders/19ZIPrv9bnL4JvYXGgUOYihp5AsKfzZPa?usp=drive_link) (RH internal only)
+  * Check connectivity to Internet
+* Attach robots to power and start up
+ * Wait a couple of minutes and run automation/move-robots.yaml Playbook from laptop attached to hackathon WIFI.
+ * All robots should do the dance!
+   
 # Setting up Robot from scratch
+
+This should only be neccessary with a new robot or when repairing/updating/replacing a robot.
 
 ## Install image and prepare robot
 
@@ -7,9 +37,9 @@
   `tar xzvf ubuntu_2204_gopigobits-microshift48-edgectrl-shrink.img.tgz`  
   `sudo dd if=ubuntu_2204_gopigobits-microshift48-edgectrl-shrink.img of=/dev/sdXXX status=progress`  
     
-* Attach Mini HDMI cable and keyboard  
-* Login as root / password  
-* Set hostname, e.g.: hostnamectl set-hostname abcwarrior.robot.lan
+* Attach network cable  
+* Login as root / password   
+* CHECK IF DONE IN IMAGE ALREADY: Configure WIFI
 
 ## Network Setup
 
@@ -29,14 +59,13 @@
               password: "password"
           dhcp4: true
 ```
+## Finish configuration 
 
-* Or attach ethernet cable  
-* Login with SSH, root is allowed  
-* Install robothackathon ssh-key
+Run Playbook `automation/configure-robot.yaml` against new robot to finish setup.
 
 ## Camera Setup (Raspi camera v2)
 
-Playbook camera-test.yaml iis here [https://github.com/cloud-native-robotz-hackathon/infrastructure/tree/main/robot](https://github.com/cloud-native-robotz-hackathon/infrastructure/tree/main/robot)   
+Playbook camera-test.yaml is here [https://github.com/cloud-native-robotz-hackathon/infrastructure/tree/main/robot](https://github.com/cloud-native-robotz-hackathon/infrastructure/tree/main/robot)   
 
 * Cable orientation: blue “bar” on cable oriented to USB ports, blue bar at camera away from lens  
 * Test camera is detected: vcgencmd get_camera  
@@ -67,11 +96,9 @@ Playbook microshift-reset.yaml is here [https://github.com/cloud-native-robotz-h
 * To use oc locally: export KUBECONFIG=/var/lib/microshift/resources/kubeadmin/kubeconfig  
 * Or cat /var/lib/microshift/resources/kubeadmin/kubeconfig > ~/.kube/config
 
-
 ## Triton
 
 [https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/getting\_started/quickstart.html](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/getting_started/quickstart.html)
 
 Check model  
 `curl --location --request GET 'http://localhost:8000/v2/models/densenet_onnx/stats'`
-
