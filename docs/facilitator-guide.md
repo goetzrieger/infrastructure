@@ -17,6 +17,7 @@
     - [Microshift](#microshift)
     - [Triton](#triton)
   - [Setup Edge Gateway / SNO OpenShift](#setup-edge-gateway--sno-openshift)
+- [Troubleshooting](#troubleshooting)
 
 
 # Preparing to Run a Hackathon 
@@ -151,3 +152,5 @@ Check model
 `curl --location --request GET 'http://localhost:8000/v2/models/densenet_onnx/stats'`
 
 ## Setup Edge Gateway / SNO OpenShift
+
+# Troubleshooting
