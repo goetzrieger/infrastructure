@@ -4,6 +4,7 @@
     - [OpenShift Edge Gateway](#openshift-edge-gateway)
   - [Hackathon On-Premise Setup](#hackathon-on-premise-setup)
     - [WIFI Router](#wifi-router)
+    - [Edge Gateway](#edge-gateway)
     - [Robots](#robots)
     - [Connect RHDP Hackathon Cluster \& Edge Gateway](#connect-rhdp-hackathon-cluster--edge-gateway)
       - [Fetch credentials of RHDP Cluster](#fetch-credentials-of-rhdp-cluster)
@@ -44,6 +45,11 @@ It is usually prepared and ready to use.
   * SSID: robot-hackathon-78b09 Wifi-Password: Stored in RH Bitwarden collection
   * The router is a preconfigured GL.iNet AXT1800, the configuration to restore is here (always use latest!): [https://drive.google.com/file/d/14T-on2pO0IIXGgDSKp70ZaBU8B9nxKvV/view?usp=drive_link](https://drive.google.com/drive/folders/19ZIPrv9bnL4JvYXGgUOYihp5AsKfzZPa?usp=drive_link) (RH internal only)
   * Check connectivity to Internet
+
+### Edge Gateway
+
+* Power on after WIFI is available
+* -> How to check?
 
 ### Robots
 
