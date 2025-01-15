@@ -1,0 +1,9 @@
+# Facilitator Guide
+
+image::overview.drawio.v2.png[]
+
+In this lab, you will get to know the functions of OpenShift AI in practical use. The aim is to control a robot equipped with a camera so that it can find a fedora. 
+
+First, as a data scientist in OpenShift AI, you will train an object detection machine learning model to recognize red hats. Obvious, right? Then you will use the model serving function to control the Raspberry Pi-based robot with a simple Python application using the analyzed images and let it find the hat. 
+
+Are you new to AI and machine learning and worried that this might be too deep for you? Don't worry, this lab is designed so that only basic OpenShift and Python knowledge is required, and participants are divided into teams. And fun is guaranteed! 
