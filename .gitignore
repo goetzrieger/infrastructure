@@ -9,6 +9,7 @@ kubeconfig-*
 
 www/*
 !www/.gitkeep
+!www/.nojekyll
 
 *.html
 target/
