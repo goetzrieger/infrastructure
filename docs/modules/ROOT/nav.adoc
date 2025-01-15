@@ -3,7 +3,6 @@
 
 * xref:development.adoc[Re-install edge-gateway]  
 
-
 * xref:development.adoc[Setup Robot from Scratch]  
 
 * xref:troubleshooting.adoc[Troubleshooting]  
