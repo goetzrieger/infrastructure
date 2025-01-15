@@ -17,7 +17,6 @@ audit.log
 .cache/
 *.log
 
-docs/
 gh-pages/
 dependency-reduced-pom.xml
 svm.jar
