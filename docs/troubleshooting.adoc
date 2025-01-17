@@ -1,0 +1,10 @@
+# Troubleshooting
+
+## Runtimes missing from some DS projects 
+
+In short: Re-create workbench
+
+* Delete Workbench
+* Check if pipeline server is running
+* Recreate Workbench
+** Use the pre-existing PVC
