@@ -1,15 +1,15 @@
-- [Preparing to Run a Hackathon](#preparing-to-run-a-hackathon)
-  - [Setup OpenShift Environment](#setup-openshift-environment)
-    - [Configure \& Deploy RHDP Catalog Item "Cloud Native Robot Hackathon"](#configure--deploy-rhdp-catalog-item-cloud-native-robot-hackathon)
+# Facilitator guide
+
+- [Run a Hackathon](#preparing-to-run-a-hackathon)
+  - [Order OpenShift Data Center env](#order-openshift-data-center-env)
+  - [Setting up the environment](#setting-up-the-environment)
+    - [Wifi Router](#wifi-router)
+    - [🤖 Robot's](#-robots)
     - [OpenShift Edge Gateway](#openshift-edge-gateway)
-  - [Hackathon On-Premise Setup](#hackathon-on-premise-setup)
-    - [WIFI Router](#wifi-router)
-    - [Edge Gateway](#edge-gateway)
-    - [Robots](#robots)
-    - [Connect RHDP Hackathon Cluster \& Edge Gateway](#connect-rhdp-hackathon-cluster--edge-gateway)
-      - [Fetch credentials of RHDP Cluster](#fetch-credentials-of-rhdp-cluster)
-      - [Connect edge to data center via skupper tunnel](#connect-edge-to-data-center-via-skupper-tunnel)
+    - [Assign team E-Mails to data center users](#assign-team-e-mails-to-data-center-users)
+    - [Run the Hackathon](#run-the-hackathon)
 - [Building Hackathon Components](#building-hackathon-components)
+  - [Re-install/Update Edge-gateway](edge-gateway-applicance-builder.adoc)
   - [Setup Robot from Scratch](#setup-robot-from-scratch)
     - [Install image and prepare robot](#install-image-and-prepare-robot)
     - [Network Setup](#network-setup)
@@ -18,64 +18,123 @@
     - [Microshift](#microshift)
     - [Triton](#triton)
   - [Setup Edge Gateway / SNO OpenShift](#setup-edge-gateway--sno-openshift)
-- [Troubleshooting](#troubleshooting)
+- [Development](development.md)
+    - [Local/Laptop](local-development.md)
+- [Troubleshooting](troubleshooting.adoc)
 
+# Run a Hackathon
 
-# Preparing to Run a Hackathon 
+|Check|When|What|
+|---|---|---|
+| |Before 1-2 Days| [Order OpenShift Data Center env](#order-openshift-data-center-env) |
+| |Location|[Setting up the environment](#setting-up-the-environment)|
 
-## Setup OpenShift Environment
+## Order OpenShift Data Center env
 
-This includes deploying the hackathon environment in RHDP and making sure an Edge Gateway is available.
+This includes deploying the hackathon environment in [demo.redhat.com](https://catalog.demo.redhat.com/catalog?search=Cloud+Native+Robot+Hackathon&item=babylon-catalog-prod%2Fsandboxes-gpte.cloud-native-robot.prod) and making sure an Edge Gateway is available.
 
-### Configure & Deploy RHDP Catalog Item "Cloud Native Robot Hackathon"
+|Field|Value
+|---|---|
+|OpenShift User Count|`9`|
+|Region|Close as possible: `eu-central-1`|
+|GPU Worker Nodes (one GPU per Worker!)|For testing puropose only, workshop is not prepred to use GPU's!
+|Enable workshop user interface|True|
 
--> Sizing
+## Setting up the environment
+
+### Wifi Router
+
+* Start the Wifi router and attach to the local Wifi or wire
+  * SSID: `robot-hackathon-78b09`
+  * Wifi-Password: Stored in RH Bitwarden collection
+  * The router is a preconfigured GL.iNet AXT1800, the configuration to restore is here (always use latest!): [gDrive router backup](https://drive.google.com/drive/folders/19ZIPrv9bnL4JvYXGgUOYihp5AsKfzZPa?usp=drive_link) (RH internal only)
+  * Check connectivity to Internet
+
+### 🤖 Robot's
+
+* Unpack all Robots
+* Attach robots to power and start up
+* Boot all Robots.
+* Wait a couple of minutes...
+* Connect your Laptop to Wifi `robot-hackathon-78b09`
+* Check connection via ansile
+
+  <details>
+  <summary>Details</summary>
+
+  At the infrastructure repo:
+
+  ```bash
+  % ansible-navigator run ./ping-all.yaml
+  ...
+  ```
+
+  And let it dance via:
+
+  ```bash
+  % ansible-navigator run ./move-robots.yaml
+  ...
+  ```
+  </details>
 
 ### OpenShift Edge Gateway
 
-The Edge Gateway is a OCP SNO instance running on-premise in the same WIFI network as the robots. All connections from the hackathon OCP cluster to the robots go through it.
+The Edge Gateway is a OCP SNO instance running on-premise in the same Wifi network as the robots. All connections from the hackathon OCP cluster to the robots go through it.
 
-It is usually prepared and ready to use.
+It is usually prepared and ready to use. Just connected the network wire to the router.
 
-## Hackathon On-Premise Setup
+* Power on after Wifi is available
+* Login into [OpenShift Console](https://console-openshift-console.apps.edge-gateway.lan/) and check all operators
+  * User: kubeadmin
+  * Password: *stored at bitwarden*
+* Login into [OpenShift GitOps](https://openshift-gitops-server-openshift-gitops.apps.edge-gateway.lan/) and check everything is in synced
+* Connect edge-date with data center
 
-### WIFI Router
+  <details>
+  <summary>Run playbooks...</summary>
 
-* Start the WIFI router and attach to the local WIFI
-  * SSID: robot-hackathon-78b09 Wifi-Password: Stored in RH Bitwarden collection
-  * The router is a preconfigured GL.iNet AXT1800, the configuration to restore is here (always use latest!): [https://drive.google.com/file/d/14T-on2pO0IIXGgDSKp70ZaBU8B9nxKvV/view?usp=drive_link](https://drive.google.com/drive/folders/19ZIPrv9bnL4JvYXGgUOYihp5AsKfzZPa?usp=drive_link) (RH internal only)
-  * Check connectivity to Internet
+  At the [cloud-native-robotz-hackathon/infrastructure](https://github.com/cloud-native-robotz-hackathon/infrastructure) repo:
 
-### Edge Gateway
+  ```bash
+  cd infrastructure/automation/
 
-* Power on after WIFI is available
-* -> How to check?
+  # Login into data center
+  export KUBECONFIG=kubeconfig-data-center
+  oc login -u admin --insecure-skip-tls-verify https://api.cluster-...
 
-### Robots
+  # Login into edge gateway
+  export KUBECONFIG=kubeconfig-edge-gateway
+  oc login -u admin --insecure-skip-tls-verify https://edge-gateway.lan:6443
 
-* Attach robots to power and start up
- * Wait a couple of minutes and run automation/move-robots.yaml Playbook from laptop attached to hackathon WIFI.
- * All robots should do the dance!
+  # Optional: Adjust robot to team configuration
+  vim inventory.yaml
 
-### Connect RHDP Hackathon Cluster & Edge Gateway
+  # Run playbook
+  ansible-navigator run new-data-center.yaml  -l <select location / specific robot>
+  ```
 
-At the [cloud-native-robotz-hackathon/infrastructure](https://github.com/cloud-native-robotz-hackathon/infrastructure) repo:
+  Tip: If the playbook fails, this is propably due to a [bug](https://github.com/cloud-native-robotz-hackathon/infrastructure/issues/66) where the Interconnect Controller doesn't initalize correctly. You can restart the Interconnect Pod (skupper-site-controller-xxx...) in the openshift-operators project as a workaround. Once done, rerun the Ansible playbook.
 
-#### Fetch credentials of RHDP Cluster
+  </details>
 
-```bash
-cd automation
-export KUBECONFIG=$(pwd)/kubeconfig-data-center
-oc login -u admin --insecure-skip-tls-verify https://api.cluster-...
-```
+## Assign team E-Mails to data center users
 
-#### Connect edge to data center via skupper tunnel
-```
-ansible-navigator run ./create-skupper-tunnel.yaml
-```
+|E-Mail|User|
+|---|---|
+|team-1@example.com|team-1|
+|team-2@example.com|team-2|
+|team-3@example.com|team-3|
+|team-4@example.com|team-4|
+|team-5@example.com|team-5|
+|team-6@example.com|team-6|
+|team-7@example.com|team-7|
+|team-8@example.com|team-8|
+|team-9@example.com|team-9|
 
-If the playbook fails, this is propably due to a [bug](https://github.com/cloud-native-robotz-hackathon/infrastructure/issues/66) where the Interconnect Controller doesn't initalize correctly. You can restart the Interconnect Pod (skupper-site-controller-xxx...) in the openshift-operators project as a workaround. Once done, rerun the Ansible playbook.
-   
+## Run the Hackathon
+
+Have fun!
+
 # Building Hackathon Components
 
 The steps detailed here should only be done when rebuilding hackathon components which are normally ready to use.
@@ -86,14 +145,14 @@ This should only be neccessary with a new robot or when repairing/updating/repla
 
 ### Install image and prepare robot
 
-* Image Ubuntu 22.04, Microshift 4.8 :  [ubuntu_2204_gopigobits-microshift48-edgectrl-shrink.img.tgz](https://drive.google.com/file/d/1I1zhFV3aXpyn30Eg-lO2gupraSWquO7B/view?usp=drive_link)  
-* Write to SD Card, will be resized to SD Card size at first boot  
-  `tar xzvf ubuntu_2204_gopigobits-microshift48-edgectrl-shrink.img.tgz`  
-  `sudo dd if=ubuntu_2204_gopigobits-microshift48-edgectrl-shrink.img of=/dev/sdXXX status=progress`  
-    
-* Attach network cable  
-* Login as root / password   
-* CHECK IF DONE IN IMAGE ALREADY: Configure WIFI
+* Image Ubuntu 22.04, Microshift 4.8 :  [ubuntu_2204_gopigobits-microshift48-edgectrl-shrink.img.tgz](https://drive.google.com/file/d/1I1zhFV3aXpyn30Eg-lO2gupraSWquO7B/view?usp=drive_link)
+* Write to SD Card, will be resized to SD Card size at first boot
+  `tar xzvf ubuntu_2204_gopigobits-microshift48-edgectrl-shrink.img.tgz`
+  `sudo dd if=ubuntu_2204_gopigobits-microshift48-edgectrl-shrink.img of=/dev/sdXXX status=progress`
+
+* Attach network cable
+* Login as root / password
+* CHECK IF DONE IN IMAGE ALREADY: Configure Wifi
 
 ### Network Setup
 
@@ -106,57 +165,55 @@ This should only be neccessary with a new robot or when repairing/updating/repla
               dhcp4: true
               optional: true
       version: 2
-      wifis:
+      Wifis:
         wlan0:
           access-points:
             "redhatrobos":
               password: "password"
           dhcp4: true
 ```
-### Finish configuration 
+### Finish configuration
 
 Run Playbook `automation/configure-robot.yaml` against new robot to finish setup.
 
 ### Camera Setup (Raspi camera v2)
 
-Playbook camera-test.yaml is here [https://github.com/cloud-native-robotz-hackathon/infrastructure/tree/main/robot](https://github.com/cloud-native-robotz-hackathon/infrastructure/tree/main/robot)   
+Playbook camera-test.yaml is here [https://github.com/cloud-native-robotz-hackathon/infrastructure/tree/main/robot](https://github.com/cloud-native-robotz-hackathon/infrastructure/tree/main/robot)
 
-* Cable orientation: blue “bar” on cable oriented to USB ports, blue bar at camera away from lens  
-* Test camera is detected: vcgencmd get_camera  
-* Script to test image acquisition  
+* Cable orientation: blue “bar” on cable oriented to USB ports, blue bar at camera away from lens
+* Test camera is detected: vcgencmd get_camera
+* Script to test image acquisition
 
 ```
-  import cv2  
-  # open camera  
-  cap = cv2.VideoCapture('/dev/video0', cv2.CAP_V4L)  
-    
-  # set dimensions  
-  cap.set(cv2.CAP_PROP_FRAME_WIDTH, 2560)  
-  cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1440)  
-    
-  # take frame  
-  ret, frame = cap.read()  
-  # write frame to file  
-  cv2.imwrite('/root/ramfilesystem/image.jpg', frame)  
-  # release camera  
+  import cv2
+  # open camera
+  cap = cv2.VideoCapture('/dev/video0', cv2.CAP_V4L)
+
+  # set dimensions
+  cap.set(cv2.CAP_PROP_FRAME_WIDTH, 2560)
+  cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1440)
+
+  # take frame
+  ret, frame = cap.read()
+  # write frame to file
+  cv2.imwrite('/root/ramfilesystem/image.jpg', frame)
+  # release camera
   cap.release()
 ```
 
 ### Microshift
 
-Playbook microshift-reset.yaml is here [https://github.com/cloud-native-robotz-hackathon/infrastructure/tree/main/robot](https://github.com/cloud-native-robotz-hackathon/infrastructure/tree/main/robot) 
+Playbook microshift-reset.yaml is here [https://github.com/cloud-native-robotz-hackathon/infrastructure/tree/main/robot](https://github.com/cloud-native-robotz-hackathon/infrastructure/tree/main/robot)
 
-* To reset Microshift: systemctl stop microshift.service; rm -rf /var/lib/microshift; systemctl start microshift.service  
-* To use oc locally: export KUBECONFIG=/var/lib/microshift/resources/kubeadmin/kubeconfig  
+* To reset Microshift: systemctl stop microshift.service; rm -rf /var/lib/microshift; systemctl start microshift.service
+* To use oc locally: export KUBECONFIG=/var/lib/microshift/resources/kubeadmin/kubeconfig
 * Or cat /var/lib/microshift/resources/kubeadmin/kubeconfig > ~/.kube/config
 
 ### Triton
 
 [https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/getting\_started/quickstart.html](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/getting_started/quickstart.html)
 
-Check model  
+Check model
 `curl --location --request GET 'http://localhost:8000/v2/models/densenet_onnx/stats'`
 
 ## Setup Edge Gateway / SNO OpenShift
-
-# Troubleshooting
