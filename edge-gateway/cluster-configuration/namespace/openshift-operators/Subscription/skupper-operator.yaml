@@ -11,5 +11,5 @@ spec:
   channel: stable
   installPlanApproval: Automatic
   name: skupper-operator
-  source: redhat-operators
+  source: cs-redhat-operator-index
   sourceNamespace: openshift-marketplace

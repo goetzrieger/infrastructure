@@ -1,0 +1,24 @@
+apiVersion: v1beta1
+kind: ApplianceConfig
+ocpRelease:
+  version: 4.16.27
+  channel: stable
+  cpuArchitecture: x86_64
+# Replace pull secret
+pullSecret: '{"auths":{"cloud.open...'
+
+sshKey: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICEibaAML0mtppKRlNQpe1eqgXB05chuIQ9/0yg2vcYx robot-hackathon'
+# Replace core password, it's document at bitwarden
+userCorePass: replaceme
+enableDefaultSources: false
+stopLocalRegistry: false
+createPinnedImageSets: false
+operators:
+  - catalog: registry.redhat.io/redhat/redhat-operator-index:v4.16
+    packages:
+      - name: openshift-gitops-operator
+        channels:
+          - name: latest
+      - name: skupper-operator
+        channels:
+          - name: stable
