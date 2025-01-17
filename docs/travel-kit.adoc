@@ -1,0 +1,28 @@
+# Travel kit
+
+List of all items you need to run the hackathon.
+
+**Work-in-progress**
+
+[cols="1,1,1"]
+|===
+|#  | Item | Description 
+
+| 
+| Edge-gateway
+| OnLogic device
+
+| 
+| Router
+| ...
+
+
+| 
+| Tiny USB Stick
+| edge-gateway, for reinstallation. Details at edge-gateway-applicance-builder.adoc
+
+| 
+| Huge USB Stick 
+| edge-gateway, for reinstallation. Details at edge-gateway-applicance-builder.adoc
+|
+|===

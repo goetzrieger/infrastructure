@@ -1,0 +1,36 @@
+# OpenShift Appliance for edge-gateway  
+
+How to rebuild and install edge-gateway
+
+
+## Build & Install the OpenShift Appliance 
+
+Documentations:
+
+* Internal: https://docs.google.com/document/d/1xYoCA8LwLJj1ISSwjmAA2c29c9RuEizRwb4BSbcCkDY/edit?tab=t.0#heading=h.66y4kqbj468a[PoC - OCP 4.17.7 Appliance Builder Documentation]
+* https://github.com/openshift/appliance/blob/master/docs/user-guide.md[OpenShift Appliance User Guide]
+
+
+## Configure OpenShift
+
+```bash
+git clone git@github.com:cloud-native-robotz-hackathon/edge-gateway-gitops.git
+
+oc login -u kubeadmin api.edge-gateway.lan:6443
+
+oc apply -k bootstrap/
+# Wait until cr application is available
+oc apply -f bootstrap/application.yaml
+```
+
+* Login into ArgoCD: https://openshift-gitops-server-openshift-gitops.apps.edge-gateway.lan
+* Check Appliation: `edge-gateway-gitops`, 'hub-controller', 'infrastructure-cluster-configuration'
+
+Or via CLI:
+```
+$ oc get applications -A
+NAMESPACE          NAME                                   SYNC STATUS   HEALTH STATUS
+openshift-gitops   edge-gateway-gitops                    Synced        Healthy
+openshift-gitops   hub-controller                         Synced        Healthy
+openshift-gitops   infrastructure-cluster-configuration   Synced        Healthy
+```
