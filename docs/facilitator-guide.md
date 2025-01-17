@@ -1,5 +1,6 @@
 # Facilitator guide
 
+- [Travel kit](travel-kit.adoc)
 - [Run a Hackathon](#preparing-to-run-a-hackathon)
   - [Order OpenShift Data Center env](#order-openshift-data-center-env)
   - [Setting up the environment](#setting-up-the-environment)
