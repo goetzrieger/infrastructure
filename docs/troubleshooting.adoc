@@ -5,7 +5,7 @@
 image::troubleshooting/missing-runtime.png[]  
 
 **Solution** 
-
+~
 * Delete Workbench
 * Check if pipelineserver is running
 * Recreate Workbench
