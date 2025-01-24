@@ -1,5 +1,15 @@
 # Troubleshooting
 
+## Runtimes missing from some DataSience projects 
+
+image::troubleshooting/missing-runtime.png[]  
+
+**Solution** 
+
+* Delete Workbench
+* Check if pipelineserver is running
+* Recreate Workbench
+
 ## Red Hat Service Internect problems
 
 ### Check Site controller pods
