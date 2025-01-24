@@ -198,8 +198,19 @@
               weight: 100
             wildcardPolicy: None
 
+    - name: Wait for hub-controller-live service
+      tags:
+        - check
+      kubernetes.core.k8s_info:
+        kubeconfig: "kubeconfig-data-center"
+        namespace: "red-hat-service-interconnect-data-center"
+        api_version: v1
+        kind: Service
+        name: hub-controller-live
+        wait: true
+
     - name: Run check pod
-      tags: 
+      tags:
         - check
       kubernetes.core.k8s:
         state: present
@@ -222,4 +233,6 @@
                 command:
                   - "/bin/sh"
                   - "-c"
-                  - "curl http://hub-controller-live.red-hat-service-interconnect-data-center.svc.cluster.local:8080/"
+                  - |
+                      set -x
+                      curl http://hub-controller-live.red-hat-service-interconnect-data-center.svc.cluster.local:8080/

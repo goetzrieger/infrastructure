@@ -83,11 +83,17 @@ cd automation
 export KUBECONFIG=$(pwd)/kubeconfig-data-center
 oc login -u admin --insecure-skip-tls-verify https://api.cluster-...
 
-# Connect edge to data center via skupper tunnel
-ansible-navigator run ./create-skupper-tunnel.yaml
+export KUBECONFIG=$(pwd)/kubeconfig-edge-gateway
+crc console --credentials
+# Copy & paste the oc login -u kubeadmin -p ..
+oc login -u kubeadmin -p ..
+
+# Run
+ansible-navigator run ./skupper-tunnel.yaml
 ```
 
 If the playbook fails, this is propably due to a [bug](https://github.com/cloud-native-robotz-hackathon/infrastructure/issues/66) where the Interconnect Controller doesn't initalize correctly. You can restart the Interconnect Pod (skupper-site-controller-xxx...) in the openshift-operators project as a workaround. Once done, rerun the Ansible playbook.
+
 
 ```bash
 # Connect robots and teams
@@ -95,6 +101,9 @@ ansible-navigator run ./update-robot-to-team.yaml -l data.lan
 ```
 
 In case the ansible-navigator can not reach your openshift local, try to run the playbooks locally:
+<details>
+
+<summary>ansible-playbook detaisl</summary>
 
 ```bash
 ansible-galaxy collection install kubernetes.core
@@ -104,9 +113,11 @@ ansible-galaxy collection install community.general
 pip install jmespath
 pip install kubernetes
 
-ansible-playbook ./create-skupper-tunnel.yaml
-ansible-playbook ./update-robot-to-team.yaml -l data.lan\
+ansible-playbook ./skupper-tunnel.yaml
+ansible-playbook ./update-robot-to-team.yaml -l data.lan
 ```
+</details>
+
 
 ## Add Robot Mapping to HubController
 In your Openshift Local open the ConfigMap [robot-mapping-configmap](https://console-openshift-console.apps-crc.testing/k8s/ns/hub-controller/configmaps/robot-mapping-configmap) and edit the Roboname (user_key) mapping(e.g. data )to your Robot hostname (e.g. data.lan)
