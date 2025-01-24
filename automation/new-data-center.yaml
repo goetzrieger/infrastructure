@@ -5,7 +5,7 @@
     - reset-microshift
 
 - name: Rebuild skupper tunnel
-  import_playbook: create-skupper-tunnel.yaml
+  import_playbook: skupper-tunnel.yaml
   tags:
     - skupper
 
