@@ -4,12 +4,46 @@
   connection: local
   tasks:
 
+    - name: Destroy a namespaces
+      tags:
+        - destroy
+      with_items:
+        - edge-gateway
+        - data-center
+      kubernetes.core.k8s:
+        state: absent
+        wait: true
+        kubeconfig: "kubeconfig-{{ item }}"
+        definition:
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: red-hat-service-interconnect-{{ item }}
+          spec: {}
+
+    - name: Restart skupper-site-controller
+      with_items:
+        - edge-gateway
+        - data-center
+      kubernetes.core.k8s:
+        state: absent
+        kubeconfig: "kubeconfig-{{ item }}"
+        namespace: openshift-operators
+        api_version: v1
+        kind: Pod
+        label_selectors:
+          - app.kubernetes.io/name=skupper-site-controller
+        wait_condition:
+          type: Ready
+          status: 'True'
+  
     - name: Create a namespaces
       with_items:
         - edge-gateway
         - data-center
       kubernetes.core.k8s:
         state: present
+        wait: true
         kubeconfig: "kubeconfig-{{ item }}"
         definition:
           apiVersion: v1
@@ -46,7 +80,6 @@
 
     - name: Start skupper at edge-gateway
       kubernetes.core.k8s:
-        state: present
         kubeconfig: "kubeconfig-edge-gateway"
         definition:
           apiVersion: v1
@@ -69,6 +102,21 @@
             router-mode: interior
             service-controller: "true"
             service-sync: "true"
+
+    - name: Wait for skupper-site
+      with_items:
+        - edge-gateway
+        - data-center
+      kubernetes.core.k8s_info:
+        kubeconfig: "kubeconfig-{{ item }}"
+        namespace: "red-hat-service-interconnect-{{ item }}"
+        api_version: v1
+        kind: Pods
+        label_selectors:
+          app.kubernetes.io/part-of=skupper
+        wait: true
+        wait_condition:
+          type: Ready
 
     - name: Token request for edge-gateway
       kubernetes.core.k8s:
@@ -110,7 +158,7 @@
         state: present
         kubeconfig: "kubeconfig-edge-gateway"
         definition: "{{ token  }}"
-  
+
     # skupper expose --target-namespace hub-controller deployment hub-controller-live  --port 8080
     - name: Expose hub-controller-live
       kubernetes.core.k8s:
@@ -149,3 +197,29 @@
               name: hub-controller-live
               weight: 100
             wildcardPolicy: None
+
+    - name: Run check pod
+      tags: 
+        - check
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: "kubeconfig-data-center"
+        wait: true
+        wait_condition:
+          type: Initialized
+          reason: "PodCompleted"
+        definition:
+          apiVersion: v1
+          kind: Pod
+          metadata:
+            generateName: check-skupper-connect
+            namespace: red-hat-service-interconnect-data-center
+          spec:
+            restartPolicy: Never
+            containers:
+              - name: checker
+                image: registry.access.redhat.com/ubi9/ubi-minimal:latest
+                command:
+                  - "/bin/sh"
+                  - "-c"
+                  - "curl http://hub-controller-live.red-hat-service-interconnect-data-center.svc.cluster.local:8080/"
