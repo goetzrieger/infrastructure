@@ -76,7 +76,7 @@ Login into [Argocd WebUI](https://openshift-gitops-server-openshift-gitops.apps-
 At the [cloud-native-robotz-hackathon/infrastructure](https://github.com/cloud-native-robotz-hackathon/infrastructure) repo:
 
 
-### Fetch credentials of Data Center
+### Create connection between data-center and local env
 
 ```bash
 cd automation
