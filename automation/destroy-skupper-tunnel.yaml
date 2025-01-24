@@ -10,6 +10,7 @@
         - data-center
       kubernetes.core.k8s:
         state: absent
+        wait: true
         kubeconfig: "kubeconfig-{{ item }}"
         definition:
           apiVersion: v1
