@@ -146,18 +146,19 @@ This should only be neccessary with a new robot or when repairing/updating/repla
 
 ### Install image and prepare robot
 
-* Image Ubuntu 22.04, Microshift 4.8 :  [ubuntu_2204_gopigobits-microshift48-edgectrl-shrink.img.tgz](https://drive.google.com/file/d/1I1zhFV3aXpyn30Eg-lO2gupraSWquO7B/view?usp=drive_link)
+* Download image Ubuntu 22.04, Microshift 4.8 :  https://drive.google.com/file/d/139K2DgZnrxKIiAU-ErjdPXQHGoGOXubV
 * Write to SD Card, will be resized to SD Card size at first boot
-  `tar xzvf ubuntu_2204_gopigobits-microshift48-edgectrl-shrink.img.tgz`
-  `sudo dd if=ubuntu_2204_gopigobits-microshift48-edgectrl-shrink.img of=/dev/sdXXX status=progress`
-
-* Attach network cable
-* Login as root / password
-* CHECK IF DONE IN IMAGE ALREADY: Configure Wifi
+  `gunzip robot-hackathon-image.20240726.img.gz`
+  `sudo dd if=robot-hackathon-image.20240726.img of=/dev/sdXXX status=progress`
+* The image will be resized to SD card size on first boot  
+* The image is preconfigured with:
+  * Automatic connection to the hackathon WIFI "robot-hackathon-78b09"
+  * Robot hackathon SSH key (Bitwarden Collection)
 
 ### Network Setup
 
-* For WLAN edit /etc/netplan/50-cloud-init.yaml and add your WLAN access point, run netplan apply. Config example:
+* If you want to configure another WIFI, attach a network cable and SSH into the robot (root / <PW> from Bitwarden collection) 
+* For WLAN edit /etc/netplan/50-cloud-init.yaml and add your WLAN access point, reboot or run `netplan apply`. Config example:
 
 ```
   network:
@@ -168,14 +169,43 @@ This should only be neccessary with a new robot or when repairing/updating/repla
       version: 2
       Wifis:
         wlan0:
-          access-points:
-            "redhatrobos":
-              password: "password"
+          access-points: 
+          "robot-hackathon-78b09":
+            password: "PASSWORD"
+          "otherssid":
+            password: "<PASSWORD>"
           dhcp4: true
 ```
 ### Finish configuration
 
-Run Playbook `automation/configure-robot.yaml` against new robot to finish setup.
+To finish the configuration, run the Playbook `[automation/configure-robot.yaml](https://github.com/cloud-native-robotz-hackathon/infrastructure/blob/main/automation/configure-robot.yaml)` against the robot.
+
+Example inventory:
+
+```
+---
+all:
+  vars:
+    ansible_user: root
+    ansible_ssh_private_key_file: ~/.ssh/robot-hackathon
+
+robots:
+  hosts:
+    abcwarrior.lan:
+      team: team-1
+```
+
+Run Ansible:
+
+```
+robot-hackathon/infrastructure/automation$ ansible-navigator run configure-robot.yaml -i myinventory.yaml 
+```
+
+And again to reset Microshift
+
+```
+robot-hackathon/infrastructure/automation$ ansible-navigator run microshift-reset.yaml -i myinventory.yaml 
+```
 
 ### Camera Setup (Raspi camera v2)
 
