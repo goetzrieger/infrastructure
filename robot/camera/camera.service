@@ -1,0 +1,11 @@
+[Unit]
+Description=Camera image aquisition
+After=multi-user.target
+
+[Service]
+Type=idle
+Restart=always
+ExecStart=/usr/bin/python3 /usr/local/bin/camera-multithread.py
+
+[Install]
+WantedBy=multi-user.target
